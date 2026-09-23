@@ -34,6 +34,22 @@ app.post('/revision', async (req, res) => {
     res.json(resultado.rows[0])
 })
 
+app.put('/revision/:id', async (req,res) => {
+    const {id} = req.params;
+    const {kilometraje, filtroaire, cambioaceite, tipoaceite, marca} = req.body;
+    const resultado = await pool.query(
+        'UPDATE revision SET kilometraje = $1, filtroaire = $2, cambioaceite = $3, tipoaceite = $4, marca = $5 RETURNING *',
+        [kilometraje, filtroaire, cambioaceite, tipoaceite, marca]
+    );
+    if(resultado.rows.length === 0){
+        return res.status(404).json({
+            mensaje: 'Dato no encontrado'
+        });
+    }
+    res.json(resultado.rows[0]);
+})
+
+
 app.listen(5000, () => {
     console.log('Puerto funcionando')
 })
